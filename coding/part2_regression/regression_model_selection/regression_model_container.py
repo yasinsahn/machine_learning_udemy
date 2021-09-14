@@ -20,19 +20,35 @@ class RegressorContainer(DataProcessor):
     """
     This class is intend to contain regression models
     without the need of importing any other libraries.
-    Includes: 
+    
+    :Includes::
+        
         linear,  
+        
         polynomial linear,  
+        
         svr,
+        
         decision tree, 
-        random forest regression models.
+        
+        random forest
     
     """
         
     def linear(self):
         """
+        
         This method creates, fits  and predicts linear regression model
         
+        Returns
+        -------
+        regressor_choice : object
+            object of chosen regressor.
+        y_pred : float64
+            predicted dependent variables from test set.
+        r2_score : float64
+            r2 score of current regressor.
+
         """
         regressor_choice = LinearRegression() # choosing related regression
         regressor_choice.fit(self.x_train_, self.y_train_) # training related regression
@@ -41,6 +57,15 @@ class RegressorContainer(DataProcessor):
     def polynomial(self):
         """
         This method creates, fits and predicts polynomial linear regression model
+        
+        Returns
+        -------
+        regressor_choice : object
+            object of chosen regressor.
+        y_pred : float64
+            predicted dependent variables from test set.
+        r2_score : float64
+            r2 score of current regressor.
         
         """
         regressor_choice = LinearRegression() # choosing related regression
@@ -53,9 +78,21 @@ class RegressorContainer(DataProcessor):
     def svr(self):
         """
         This method creates, fits, and predicts support vector regression model
+        
         rbf is used as default kernel, 
-        kernel can be determined according to sklearn.svm.SVR via try_regression method input
+        
+        kernel can be determined according to sklearn.svm.SVR
+        
         Uses standard scaler to scale variables
+        
+        Returns
+        -------
+        regressor_choice : object
+            object of chosen regressor.
+        y_pred : float64
+            predicted dependent variables from test set.
+        r2_score : float64
+            r2 score of current regressor.
         
         """
         regressor_choice = SVR(kernel=self.kernel_) # choosing related regression
@@ -73,7 +110,17 @@ class RegressorContainer(DataProcessor):
     def decision_tree(self):
         """
         This method creates, fits, and predicts decision tree regression model
-        random state of the regressor can be determined via try_regression method input
+        
+        random state of the regressor can be determined
+        
+        Returns
+        -------
+        regressor_choice : object
+            object of chosen regressor.
+        y_pred : float64
+            predicted dependent variables from test set.
+        r2_score : float64
+            r2 score of current regressor.
         
         """
         # choosing related regression
@@ -87,9 +134,19 @@ class RegressorContainer(DataProcessor):
     def random_forest(self):
         """
         This method creates, fits, and predicts random forest regression model
+        
         10 is used as default number of estimators
-        random state and number of estimators of the regressor 
-        can be determined via try_regression method input
+        
+        random state and number of estimators of the regressor can be determined
+        
+        Returns
+        -------
+        regressor_choice : object
+            object of chosen regressor.
+        y_pred : float64
+            predicted dependent variables from test set.
+        r2_score : float64
+            r2 score of current regressor.
         
         """
         # choosing related regression

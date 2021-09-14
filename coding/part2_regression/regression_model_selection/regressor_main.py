@@ -11,41 +11,92 @@ from regression_model_container import RegressorContainer
 
 
 class SelectRegressor(RegressorContainer):
-    
     """
          :ONLY VALID FOR CSV DATA FILES !:
         
 This class is intended to select related regression model
     
-:Includes:: 
+Includes:
+------------
+
 >>> Linear 
 >>> Polynomial linear 
 >>> SVR 
 >>> Decision Tree 
 >>> Random Forest
     
-:Arguments::
+Arguments:
+-------------
+
+>>> filename (str): name of the .csv data file: 
     
->>> filename: name of the .csv data file: 
-    
->>> regressor: name of regressor
+>>> regressor (str): name of regressor
 
->>> kernel: kernel name of SVR (only usable for SVR)
+>>> kernel (str): kernel name of SVR 
+                    (only usable for SVR)
 
->>> n_estimators = number of trees for random forest
+>>> n_estimators (int) = number of trees 
+                                for random forest
 
->>> random_state = random state
+>>> random_state (int) = random state
         only for random forest & decision tree
         
->>> poly_degree = degree of the polynomial
+>>> poly_degree (int) = degree of the polynomial
                 (only for polynomial regression)
 
->>> test_size = split ratio for test 
+>>> test_size (float)= split ratio for test 
                 set between [0-1]
 
+Returns:
+-----------
+
+>>> regressor properties (regression object)
+>>> prediction results for test set (float64)
+>>> r2 score (float64)
+
+Attributes:
+--------------
+
+:try_regressor::
+
+This method routes current regression choice to related regression method
+        
+:Returns:: 
+>>> Selected regressor from regressor map
+
+:linear::
+
+This method creates, fits  and predicts linear regression model
+        
+:polynomial::
+
+This method creates, fits and predicts polynomial linear regression model
+    
+:SVR::
+
+This method creates, fits, and predicts support vector regression model
+
+rbf is used as default kernel
+ 
+kernel can be determined according to sklearn.svm.SVR
+
+Uses standard scaler to scale variables   
+
+:decision_tree::
+        
+This method creates, fits, and predicts decision tree regression model
+
+random state of the regressor can be determined
+
+:random_forest::
+
+This method creates, fits, and predicts random forest regression model
+
+10 is used as default number of estimators
+
+random state and number of estimators of the regressor can be determined
+
     """
-
-
     def __init__(self, filename, \
                                    regressor = 'linear',kernel='rbf', \
                                        n_estimators = 10, random_state = None,\
@@ -68,10 +119,11 @@ This class is intended to select related regression model
         self.test_size_ = test_size
     def try_regressor(self):
         """
+        
         This method routes current regression choice to related regression method
-        
-        
+
         """
+
         return self.regressor_map_[self.regressor_]()
 
 
