@@ -20,24 +20,154 @@ from sklearn.preprocessing import StandardScaler
 
 class ClassifierContainer(DataProcessor):
     """
-    This class is intend to contain classification models
-    without the need of importing any other libraries.
+         :ONLY VALID FOR CSV DATA FILES !:
+             
+This class is intend to contain classification models without the need of importing any other libraries.
     
-    :Includes::
-        
-        logistic regression,  
-        
-        naive bayes,  
-        
-        SVM,
-        
-        decision tree, 
-        
-        random forest,
-        
-        k-nearest neighbor
+Includes:
+------------
+
+>>> LogisticRegression 
+>>> Naive Bayes 
+>>> SVM 
+>>> Decision Tree 
+>>> Random Forest
+>>> K-Nearest Neighbor
+
+Arguments:
+-------------
+
+>>> filename (str): name of the .csv data file: 
     
+>>> kernel (str, optional, defaul:rbf): 
+            kernel name of SVM
+
+>>> n_estimators (int, optional, default:10):
+                number of trees for random forest
+
+>>> random_state (int, optional, default:None):
+                random state of the classifier
+
+>>> test_size (float, optional, default:0.2):
+            split ratio for test set between [0-1]
+                
+>>> criterion (str, optinal, default:entropy):
+            tree calculating criterion 
+            (decision tree & random forest)      
+                
+>>> n_neigbors (int, optional, default:5):
+        number of neighbors (knn)
+                        
+>>> metric (str, optional, default:minkowski):
+            distance metric (knn)
+                        
+>>> p (int, optional, default:2):
+        distance metric degree (knn)                
+
+Attributes:
+--------------
+
+logistic
+-------
+This method creates, fits  and predicts logistic classifier model
+
+:Returns::
+
+classifier_choice : object
+    object of chosen classifier.
+y_pred : float64
+    predicted dependent variables from test set.
+accuracy : float64
+    accuracy score of current classifier.
+        
+naive_bayes
+------------
+This method creates, fits  and predicts naive bayes classifier model
+
+:Returns::
+
+classifier_choice : object
+    object of chosen classifier.
+y_pred : float64
+    predicted dependent variables from test set.
+accuracy : float64
+    accuracy score of current classifier.
+    
+SVM
+----------
+This method creates, fits  and predicts svm classifier model
+
+:Returns::
+
+classifier_choice : object
+    object of chosen classifier.
+y_pred : float64
+    predicted dependent variables from test set.
+accuracy : float64
+    accuracy score of current classifier.
+
+rbf is used as default kernel
+ 
+kernel can be determined according to sklearn.svm.SVC
+
+decision_tree
+---------------  
+This method creates, fits  and predicts decision tree classifier model
+
+:Returns::
+
+classifier_choice : object
+    object of chosen classifier.
+y_pred : float64
+    predicted dependent variables from test set.
+accuracy : float64
+    accuracy score of current classifier.
+
+random_forest
+-----------------
+This method creates, fits  and predicts random forest classifier model
+
+:Returns::
+
+classifier_choice : object
+    object of chosen classifier.
+y_pred : float64
+    predicted dependent variables from test set.
+accuracy : float64
+    accuracy score of current classifier.
+
+knn
+--------
+This method creates, fits  and predicts k-nearest neighbor classifier model
+
+:Returns::
+
+classifier_choice : object
+    object of chosen classifier.
+y_pred : float64
+    predicted dependent variables from test set.
+accuracy : float64
+    accuracy score of current classifier.
+
+
     """
+    def __init__(self, filename, kernel='rbf', \
+                                       n_estimators = 10, random_state = None,\
+                                           test_size = 0.2, criterion = 'entropy',\
+                                               n_neighbors = 5, metric = 'minkowski',p = 2):
+        self.random_state_ = random_state
+        x, y = self.prepare_data_from_csv(filename)
+        self.test_size_ = test_size
+        
+        self.x_train_, self.x_test_, self.y_train_, self.y_test_ = \
+            self.create_train_test_set(x, y, test_size = self.test_size_,\
+                                       random_state = self.random_state_)
+        self.kernel_ = kernel
+        self.n_estimators_ = n_estimators
+        self.criterion_ = criterion
+        self.n_neighbors_ = n_neighbors
+        self.metric_ = metric
+        self.p_ = p
         
     def logistic(self):
         """
@@ -192,4 +322,3 @@ class ClassifierContainer(DataProcessor):
         y_pred = classifier_choice.predict(x_test) # predicting results for given test set
         # outputing classifier, prediction, accuracy score of classifier
         return classifier_choice, y_pred, accuracy_score(self.y_test_,y_pred)
-

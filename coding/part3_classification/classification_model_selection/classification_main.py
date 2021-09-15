@@ -29,33 +29,35 @@ Includes:
 Arguments:
 -------------
 
->>> filename (str): name of the .csv data file: 
+>>> filename (str): name of the .csv data file:
     
->>> classifier (str): name of classifier
+>>> kernel (str, optional, defaul:rbf): 
+            kernel name of SVM
 
->>> kernel (str): kernel name of SVR 
-                    (only usable for SVR)
+>>> n_estimators (int, optional, default:10):
+                number of trees for random forest
 
->>> n_estimators (int) = number of trees 
-                                for random forest
+>>> random_state (int, optional, default:None):
+                random state of the classifier
 
->>> random_state (int) = random state of the classifier
-
->>> test_size (float)= split ratio for test 
-                set between [0-1]
+>>> test_size (float, optional, default:0.2):
+            split ratio for test set between [0-1]
                 
->>> criterion (str) = tree calculating criterion
-                        (valid for decision tree
-                                 & random forest)      
+>>> criterion (str, optinal, default:entropy):
+            tree calculating criterion 
+            (decision tree & random forest)      
                 
->>> n_neigbors (int) = number of neighbors
-                        (only usable for knn)
+>>> n_neigbors (int, optional, default:5):
+        number of neighbors (knn)
                         
->>> metric (str) = distance metric
-                        (only usable for knn)
+>>> metric (str, optional, default:minkowski):
+            distance metric (knn)
                         
->>> p (int) = distance metric degree
-                        (only usable for knn)                
+>>> p (int, optional, default:2):
+        distance metric degree (knn)
+        
+>>> classifier (str, optional, default: logistic):
+                name of classifier
 
 Returns:
 -----------
@@ -67,48 +69,106 @@ Returns:
 Attributes:
 --------------
 
-:try_classifier::
-
+try_classifier
+-----------------
 This method routes current classification choice to related classification method
         
 :Returns:: 
 >>> Selected classifier from classifier map
 
-:logistic::
+logistic
+-------
+This method creates, fits  and predicts logistic classifier model
 
-This method creates, fits  and predicts linear classification model
+:Returns::
+
+classifier_choice : object
+    object of chosen classifier.
+y_pred : float64
+    predicted dependent variables from test set.
+accuracy : float64
+    accuracy score of current classifier.
         
-:naive_bayes::
-
+naive_bayes
+------------
 This method creates, fits  and predicts naive bayes classifier model
-    
-:SVM::
 
+:Returns::
+
+classifier_choice : object
+    object of chosen classifier.
+y_pred : float64
+    predicted dependent variables from test set.
+accuracy : float64
+    accuracy score of current classifier.
+    
+SVM
+----------
 This method creates, fits  and predicts svm classifier model
+
+:Returns::
+
+classifier_choice : object
+    object of chosen classifier.
+y_pred : float64
+    predicted dependent variables from test set.
+accuracy : float64
+    accuracy score of current classifier.
 
 rbf is used as default kernel
  
 kernel can be determined according to sklearn.svm.SVC
 
-:decision_tree::
-        
+decision_tree
+---------------  
 This method creates, fits  and predicts decision tree classifier model
 
-:random_forest::
+:Returns::
 
+classifier_choice : object
+    object of chosen classifier.
+y_pred : float64
+    predicted dependent variables from test set.
+accuracy : float64
+    accuracy score of current classifier.
+
+random_forest
+-----------------
 This method creates, fits  and predicts random forest classifier model
 
-:knn::
+:Returns::
 
+classifier_choice : object
+    object of chosen classifier.
+y_pred : float64
+    predicted dependent variables from test set.
+accuracy : float64
+    accuracy score of current classifier.
+
+knn
+--------
 This method creates, fits  and predicts k-nearest neighbor classifier model
+
+:Returns::
+
+classifier_choice : object
+    object of chosen classifier.
+y_pred : float64
+    predicted dependent variables from test set.
+accuracy : float64
+    accuracy score of current classifier.
+
 
 
     """
-    def __init__(self, filename, \
-                                   classifier = 'linear',kernel='rbf', \
-                                       n_estimators = 10, random_state = None,\
+    def __init__(self, filename, kernel='rbf', n_estimators = 10, random_state = None,\
                                            test_size = 0.2, criterion = 'entropy',\
-                                               n_neighbors = 5, metric = 'minkowski',p = 2):
+                                               n_neighbors = 5, metric = 'minkowski',p = 2,\
+                                                   classifier = 'logistic',):
+        
+        super().__init__(filename, kernel, n_estimators, random_state, \
+                          test_size, criterion, n_neighbors, metric, p)
+        self.classifier_ = classifier
         self.classifier_map_ = {
             'logistic': self.logistic,
             'naive_bayes': self.naive_bayes,
@@ -117,20 +177,7 @@ This method creates, fits  and predicts k-nearest neighbor classifier model
             'random_forest': self.random_forest,
             'knn': self.knn
             }
-        self.random_state_ = random_state
-        x, y = self.prepare_data_from_csv(filename)
-        self.test_size_ = test_size
-        
-        self.x_train_, self.x_test_, self.y_train_, self.y_test_ = \
-            self.create_train_test_set(x, y, test_size = self.test_size_,\
-                                       random_state = self.random_state_)
-        self.kernel_ = kernel
-        self.n_estimators_ = n_estimators
-        self.classifier_ = classifier
-        self.criterion_ = criterion
-        self.n_neighbors_ = n_neighbors
-        self.metric_ = metric
-        self.p_ = p
+
     def try_classifier(self):
         """
         
@@ -145,35 +192,35 @@ This method creates, fits  and predicts k-nearest neighbor classifier model
 logistic_classifier = SelectClassifier(filename = 'Data.csv', classifier='logistic',\
                                        test_size = 0.25, random_state = 0)
 c_logistic, y_pred_logistic, accuracy_logistic = logistic_classifier.try_classifier()
-print(accuracy_logistic)
+print(f'Logistic regression accuracy is: {accuracy_logistic}')
 
 
 knn_classifier = SelectClassifier(filename = 'Data.csv', classifier='knn',\
                                        test_size = 0.25, random_state = 0, n_neighbors = 5,\
                                            metric='minkowski', p=2)
 c_knn, y_pred_knn, accuracy_knn = knn_classifier.try_classifier()
-print(accuracy_knn)
+print(f'K-nearest neighbor accuracy is: {accuracy_knn}')
 
 svm_classifier = SelectClassifier(filename = 'Data.csv', classifier='svm',\
                                        test_size = 0.25, random_state = 0, kernel = 'rbf')
 c_svm, y_pred_svm, accuracy_svm = svm_classifier.try_classifier()
-print(accuracy_svm)
+print(f'SVM accuracy is: {accuracy_svm}')
 
 
 naive_bayes_classifier = SelectClassifier(filename = 'Data.csv', classifier='naive_bayes',\
                                        test_size = 0.25, random_state = 0)
 c_nb, y_pred_nb, accuracy_nb = naive_bayes_classifier.try_classifier()
-print(accuracy_nb)
+print(f'Naive Bayes accuracy is: {accuracy_nb}')
 
 
 decision_tree_classifier = SelectClassifier(filename = 'Data.csv', classifier='decision_tree',\
                                        test_size = 0.25, random_state = 0, criterion = 'entropy')
 c_dt, y_pred_dt, accuracy_dt = decision_tree_classifier.try_classifier()
-print(accuracy_dt)
+print(f'Decision tree accuracy is: {accuracy_dt}')
 
 
 random_forest_classifier = SelectClassifier(filename = 'Data.csv', classifier='random_forest',\
                                        test_size = 0.25, random_state = 0, \
                                            n_estimators = 10, criterion = 'entropy')
 c_rf, y_pred_rf, accuracy_rf = random_forest_classifier.try_classifier()
-print(accuracy_rf)
+print(f'Random forest accuracy is: {accuracy_rf}')
